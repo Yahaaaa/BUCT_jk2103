@@ -1,0 +1,19 @@
+{
+  "code": "0",
+  "msg": "成功",
+  "data": {
+    "id": 118,
+    "username": "hujin11112",
+    "password": "12312",
+    "avatarUrl": "",
+    "email": "",
+    "phone": "",
+    "sex": "",
+    "age": "",
+    "createTime": "2024-05-04 15:47:12",
+    "updateTime": "2024-05-05 02:53:39",
+    "isBanned": false,
+    "comments": null
+  },
+  "total": 1
+}

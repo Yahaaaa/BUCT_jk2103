@@ -1,0 +1,83 @@
+{
+  "code": "0",
+  "msg": "成功",
+  "data": {
+    "id": 12,
+    "username": "user81",
+    "password": "password81",
+    "avatarUrl": "https://example.com/avatar/81.jpg",
+    "email": "user81@example.com",
+    "phone": "+123456789081",
+    "sex": "男",
+    "age": "18",
+    "createTime": "2024-05-02 17:28:16",
+    "updateTime": "2024-05-02 17:28:16",
+    "isBanned": false,
+    "comments": [
+      {
+        "id": 34,
+        "userId": 12,
+        "artifactId": 5,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 47,
+        "userId": 12,
+        "artifactId": 841,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 99,
+        "userId": 12,
+        "artifactId": 1000,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 302,
+        "userId": 12,
+        "artifactId": 2,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 327,
+        "userId": 12,
+        "artifactId": 766,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 371,
+        "userId": 12,
+        "artifactId": 573,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-06-02 17:32:44"
+      },
+      {
+        "id": 482,
+        "userId": 12,
+        "artifactId": 296,
+        "content": "这是用户对文物的评论",
+        "createTime": "2024-05-02 17:32:44"
+      },
+      {
+        "id": 501,
+        "userId": 12,
+        "artifactId": 11,
+        "content": "我喜欢你",
+        "createTime": "2024-05-05 02:18:55"
+      },
+      {
+        "id": 502,
+        "userId": 12,
+        "artifactId": 11,
+        "content": "我喜欢这个文物",
+        "createTime": "2024-05-05 02:23:13"
+      }
+    ]
+  },
+  "total": 1
+}
