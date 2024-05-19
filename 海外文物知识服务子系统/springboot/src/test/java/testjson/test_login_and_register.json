@@ -1,0 +1,19 @@
+{
+  "code": "0",
+  "msg": "成功",
+  "data": {
+    "id": 120,
+    "username": "xinyi",
+    "password": "1111",
+    "avatarUrl": null,
+    "email": null,
+    "phone": null,
+    "sex": null,
+    "age": null,
+    "createTime": "2024-05-05 02:47:05",
+    "updateTime": null,
+    "isBanned": false,
+    "comments": null
+  },
+  "total": 1
+}
