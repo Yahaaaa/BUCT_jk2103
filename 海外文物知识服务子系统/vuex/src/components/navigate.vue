@@ -28,8 +28,11 @@
       <router-link to="/search" tag="el-menu-item" style="text-decoration: none">
         <el-menu-item index="4">文物查询</el-menu-item>
       </router-link>
-      <el-menu-item index="4">问答系统</el-menu-item>
-      <el-menu-item index="4">app下载</el-menu-item>
+
+      <el-menu-item index="4" @click="Toquest" style="text-decoration: none">
+        问答系统
+      </el-menu-item>
+
       <el-menu-item index="4" @click="Toback" style="text-decoration: none">
         后台管理
       </el-menu-item>
@@ -65,7 +68,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const store = useStore();
 const isLoggedIn = computed(() => !!store.state.user);
-
+const Toquest=()=>{
+  window.open('http://10.16.2.168:3101/', '_self')
+};
 const Tozstp = () => {
   window.open('http://10.16.2.168:7474/browser/', '_self')
 };
