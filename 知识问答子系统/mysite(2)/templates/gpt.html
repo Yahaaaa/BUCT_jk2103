@@ -1,0 +1,595 @@
+<!--这是原来的代码-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Medical Q&A Platform</title>-->
+<!--    <style>-->
+<!--        /* 样式 */-->
+<!--        .container {-->
+<!--            max-width: 600px;-->
+<!--            margin: 0 auto;-->
+<!--            padding: 20px;-->
+<!--            border: 1px solid #ccc;-->
+<!--            border-radius: 5px;-->
+<!--        }-->
+<!--        .message {-->
+<!--            margin-bottom: 10px;-->
+<!--            padding: 10px;-->
+<!--            border-radius: 5px;-->
+<!--        }-->
+<!--        .user-message {-->
+<!--            background-color: #eaf6ff;-->
+<!--            text-align: right;-->
+<!--        }-->
+<!--        .bot-message {-->
+<!--            background-color: #f0f0f0;-->
+<!--            text-align: left;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="container">-->
+<!--    <div class="title">-->
+<!--        <h1>知识问答子系统</h1>-->
+<!--    </div>-->
+<!--    <div class="message-list" id="messageList">-->
+<!--        &lt;!&ndash; Message list will be populated dynamically &ndash;&gt;-->
+<!--    </div>-->
+<!--    <div class="input-container">-->
+<!--        <input class="input" placeholder="请输入消息" id="userInput"></input>-->
+<!--        <button class="send-button" onclick="sendMessage()">发送</button>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    function sendMessage() {-->
+<!--        var message = document.getElementById('userInput').value;-->
+<!--        if (message) {-->
+<!--            // Output user's message-->
+<!--            displayMessage(message, 'user-message');-->
+
+<!--            // Call the chatbot API-->
+<!--            fetch('/chatbot-api/', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json',-->
+<!--                    'X-CSRFToken': '{{ csrf_token }}'-->
+<!--                },-->
+<!--                body: JSON.stringify({ message: message })-->
+<!--            })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--            console.log("Response:", data);-->
+<!--                // Output bot's response-->
+<!--                displayMessage(data.response, 'bot-message');-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error("Error fetching data:", error);-->
+<!--            });-->
+
+<!--            // Clear input field after sending message-->
+<!--            document.getElementById('userInput').value = '';-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Function to display message-->
+<!--    function displayMessage(message, messageType) {-->
+<!--        var messageContainer = document.createElement('div');-->
+<!--        messageContainer.textContent = message;-->
+<!--        messageContainer.classList.add('message', messageType);-->
+<!--        document.getElementById('messageList').appendChild(messageContainer);-->
+<!--    }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+<!--这是王妍写的前端-->
+
+<!DOCTYPE html>
+<html lang="zh" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识问答子系统</title>
+    <style>
+        /* 页面基础样式 */
+        body, html {
+            font-family: 'Arial', sans-serif;
+            background-color: #e6f7ff; /* 设置背景颜色为浅蓝色 */
+            height: 100%; /* 设置html和body的高度为100% */
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 100%; /* 适应屏幕宽度 */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* 使用视窗高度确保占满整个屏幕 */
+            background-color: white; /* 设置容器背景为白色 */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+            overflow: hidden; /* 隐藏溢出内容 */
+            position: relative; /* 为了固定输入框 */
+
+        }
+        /* 消息列表样式 */
+        .message-list {
+            overflow-y: auto; /* 设置滚动条 */
+            padding: 10px;
+            //padding-bottom: 200px; /* 设置底部内边距避免遮挡，100px 应根据输入区域的实际高度调整 */
+            flex: 1;
+            height: calc(100vh - 200px);
+        }
+        /* 消息样式 */
+        .message {
+
+            display: flex;
+            align-items: flex-start; /* 顶部对齐 */
+            flex-direction: column; /* 垂直布局 */
+            margin-bottom: 15px;
+            margin-left: 10px; /* 左边距 */
+            margin-right: 10px; /* 右边距 */
+        }
+        .user-message .text, .bot-message .text {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 2px 0; /* 为时间标签留出空间 */
+        }
+        .user-message .text {
+            font-size: 14px; /* 设置字体大小为 12px */
+            background-color: #eaf6ff;
+            align-self: flex-start /* 用户消息左对齐 */
+        }
+        .bot-message .text {
+            font-size: 14px; /* 设置字体大小为 12px */
+            background-color: #f0f0f0;
+            align-self: flex-start; /* 机器人消息左对齐 */
+        }
+        .message-info {
+            display: flex;
+            align-items: center;
+        }
+        /* 用户消息样式 */
+        .user-message .message-info {
+            font-size: 12px; /* 设置字体大小为 10px */
+            font-weight: bold; /* 设置字体加粗 */
+            flex-direction: row-reverse; /* 用户信息正向排列 */
+        }
+
+        /* 机器人消息样式 */
+        .bot-message .message-info {
+            font-size: 12px; /* 设置字体大小为 10px */
+            font-weight: bold; /* 设置字体加粗 */
+            flex-direction: row; /* 机器人信息正向排列 */
+        }
+        .avatar {
+            width: 26px; /* 头像大小 */
+            height: 26px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #ccc;
+           // background-image: url('../data/profile.png'); /* 设置背景图片 */
+            background-size: cover; /* 覆盖整个容器 */
+            background-position: center; /* 图片居中显示 */
+        }
+        .avatar-user {
+            background-image: url('/static/images/user_profile.png'); /* 用户头像图片 */
+        }
+        .avatar-bot {
+            background-image: url('/static/images/bot_profile.png'); /* 机器人头像图片 */
+        }
+
+        //问答名称
+        .name {
+            white-space: nowrap; /* 防止名称换行 */
+            font-size: 10px; /* 设置字体大小为 10px */
+            font-weight: bold; /* 设置字体加粗 */
+        }
+        .timestamp {
+            font-size: 10px;
+            color: #777;
+        }
+        /* 输入框和按钮样式 */
+         .input-bottom {
+            width: 100%; /* 宽度为容器的100% */
+            background-color: white;
+            display: flex;
+            padding: 10px;
+        }
+        .input-container {
+            position: absolute; /* 绝对定位 */
+            bottom: 0; /* 底部 */
+            right:0; /* 左边 */
+            width: 78%; /* 宽度为容器的100% */
+            background-color: white;
+            display: flex;
+            padding: 2px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* 输入框顶部的阴影效果 */
+            flex-direction: column; /* 垂直排列 */
+            height: 120px;
+        }
+        .input-bottom {
+            display: flex; /* 确保输入框和发送按钮在同一行 */
+            width: 100%;
+        }
+        .input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        .send-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+
+            margin-right: 20px; /* 设置右边距 */
+        }
+        .send-button:hover {
+            background-color: #0056b3;
+        }
+        .title {
+            display: flex; /* 使用 Flexbox 布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            padding-left: 30px; /* 左边距 */
+            //border-bottom: 2px solid #ccc; /* 底部边框 */
+            text-align: left; /* 文本左对齐 */
+           // margin: 10px 0; /* 上下边距 */
+            color: #333; /* 文字颜色 */
+            font-size: 10px; /* 字体大小 */
+            background-color: #add8e6;
+            height:40px;
+
+        }
+        .button-group {
+            display: flex; /* 使用 flex 布局 */
+            justify-content: space-around; /* 按钮均匀分布 */
+            margin-right: 10px; /* 设置右边距 */
+            box-sizing: border-box; /* 盒模型设为border-box，包括内边距和边框在内宽度 */
+            margin-top: 2px; /* 上边距 */
+            margin-left: 10px
+        }
+
+        .button-group button {
+            flex-grow: 1; /* 按钮占据可用空间 */
+            margin: 4px 10px; /* 调整按钮之间及与容器边缘的间距 */
+            background-color: #1795bb;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            padding: 10px 32px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.4s, color 0.4s, border 0.4s;
+        }
+        .button-group button:hover {
+           background-color: #fff;
+            color: #1795bb;
+            border: 1px solid #ccc;
+        }
+          .slideshow-container {
+            position: relative;
+            width: 100%; /* 充满整个父容器 */
+            height: calc(100% - 40px); /* 减少高度，为导航条留出空间 */
+            margin: auto;
+            overflow: hidden; /* 防止内容溢出 */
+            padding-bottom: 20px; /* 底部内边距，为导航条留出空间 */
+          }
+
+          .slides {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform 0.5s ease;
+          }
+
+          .slide {
+            flex: 0 0 100%;
+            //width: 100%;
+            height: 100%;
+            position: relative;
+          }
+
+          img {
+            width: 100%;
+            height: auto;
+            object-fit: cover; /* 图片保持比例并填满容器 */
+          }
+
+        .caption {
+            position: relative; /* 调整为相对定位 */
+            bottom: -15px; /* 放在容器底部 */
+            left: 50%;
+            transform: translateX(-50%);
+            color: black; /* 根据背景颜色调整字体颜色，确保可读性 */
+            font-size: 12px;
+            background-color:#f0f0f0; /* 轻微的背景色以增强可读性 */
+            padding: 5px 10px; /* 增加内边距 */
+            width: calc(100% - 20px); /* 宽度稍小于滑块宽度，留出边距 */
+            text-align: center; /* 文字居中显示 */
+            box-sizing: border-box; /* 包括边距在内的宽度计算 */
+             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+
+          .navigation {
+            position: relative; /* 相对定位 */
+            top: 10px; /* 距离图片底部的距离 */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中 */
+            display: flex;
+            justify-content: center; // 确保内部元素水平居中
+            z-index: 1000; // 确保它在最顶层
+          }
+
+          .bar {
+
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: gray; /* 提高对比度，确保在任何背景下都能看到 */
+            margin: 0 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5); /* 添加外阴影以增加可见性 */
+          }
+
+          input[type="radio"] {
+            display: none;
+          }
+
+          input[type="radio"]:checked + .bar {
+            background-color: black;
+          }
+        .con {
+          display: flex;
+          flex-wrap: wrap;
+        }
+      .left {
+        flex: 1; /* 占据剩余空间 */
+        background-color: #add8e6; /* 浅蓝色色背景 */
+        padding: 20px;
+        box-sizing: border-box;
+    //    height: 100%; /* 充满父容器的高度 */
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
+           height: 100vh;  // 取决于您整体布局的需求
+      }
+
+      .right {
+
+        flex: 4;
+        display: flex;  // 启用flex布局
+        flex-direction: column;  // 设置子元素沿纵轴排列
+        background-color: white; /* 白色背景 */
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: hidden;  // 防止内容溢出
+        height: 100vh;  // 取决于您整体布局的需求
+         border: 2px solid black;  /* 添加黑色边框 */
+      }
+        .qlabel{
+        text-align: right; /* 将文本内容靠右对齐 */
+          font-size: 10px; /* 设置字体大小为10px */
+          margin-right: 15px; /* 将文本内容与右边距保持10px的距离 */
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="title">
+        <h1>知识问答子系统</h1>
+    </div>
+    <div class="con">
+
+
+      <div class="left">
+            <div class="slideshow-container">
+              <div class="slides">
+                <div class="slide">
+                  <img src="/static/images/SXmuseum.jpg" alt="Slide 1">
+                  <div class="caption">山西博物馆</div>
+                </div>
+                <div class="slide">
+                  <img src="/static/images/HBmuseum.jpg" alt="Slide 2">
+                  <div class="caption">湖北博物馆</div>
+                </div>
+                <div class="slide">
+                  <img src="/static/images/Amuseum.jpg" alt="Slide 3">
+                  <div class="caption">阿姆斯特丹国立博物馆</div>
+                </div>
+                  <div class="slide">
+                  <img src="/static/images/BLmuseum.jpg" alt="Slide 3">
+                  <div class="caption">柏林国家博物馆</div>
+                </div>
+              </div>
+              <!-- 索引导航 -->
+              <div class="navigation">
+                <span class="bar" onclick="manualSlide(0)"></span>
+                <span class="bar" onclick="manualSlide(1)"></span>
+                <span class="bar" onclick="manualSlide(2)"></span>
+                  <span class="bar" onclick="manualSlide(3)"></span>
+              </div>
+            </div>
+
+
+      </div>
+      <div class="right">
+        <div class="message-list" id="messageList">
+            <!-- 消息列表将动态填充 -->
+        </div>
+
+        <div class="input-container">
+                    <div class="qlabel">问答示例:xx的xx是什么（文物名称的国籍、朝代、材质、尺码、描述、更多网址、照片）</div>
+              <div class="input-bottom">
+                <input type="text" class="input" placeholder="请输入消息" id="userInput">
+                <button class="send-button" onclick="sendMessage()">发送</button>
+              </div>
+                <!--    按钮    -->
+             <div class="button-group">
+                <!-- 第一个按钮 -->
+                <button class="custom-button" onclick="secondFunction(this.textContent)">山西博物馆</button>
+                <!-- 第二个按钮 -->
+                <button class="second-button" onclick="secondFunction(this.textContent)">湖北博物馆</button>
+                 <!-- 第三个按钮 -->
+                <button class="second-button" onclick="secondFunction(this.textContent)">阿姆斯特丹国立博物馆</button>
+                 <!-- 第四个按钮 -->
+                <button class="second-button" onclick="secondFunction(this.textContent)">柏林国家博物馆</button>
+
+
+            </div>
+
+        </div>
+      <!--问答按钮结束-->
+      </div>
+    </div>
+</div>
+
+<script>
+         let slideIndex = 0;
+          const slides = document.querySelectorAll('.slide');
+          const bars = document.querySelectorAll('.bar');
+
+          function showSlide(index) {
+            slides.forEach(slide => {
+              slide.style.transform = `translateX(-${index * 100}%)`;
+            });
+            activateBar(index);
+          }
+
+          function activateBar(index) {
+            bars.forEach(bar => {
+              bar.classList.remove('active-bar');
+            });
+            bars[index].classList.add('active-bar');
+          }
+
+          function nextSlide() {
+            slideIndex = (slideIndex + 1) % slides.length;
+            showSlide(slideIndex);
+          }
+
+          function manualSlide(index) {
+            slideIndex = index;
+            showSlide(slideIndex);
+            clearInterval(autoSlide);
+            autoSlide = setInterval(nextSlide, 3000); // Restart auto-play
+          }
+
+          let autoSlide = setInterval(nextSlide, 3000);
+<!--轮播图结束-->
+    function sendMessage() {
+        var message = document.getElementById('userInput').value;
+        if (message) {
+            // 显示用户消息
+            displayMessage(message, 'user-message', 'You');
+<!--            API消息             ------->
+            fetch('/chatbot-api/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log("Response:", data);
+                // Output bot's response
+                 setTimeout(() => displayMessage(data.response, 'bot-message', '问答机器人'), 500);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+
+<!--chatgpt接口结束--------------------------------------------->
+
+            // 模拟消息
+<!--            setTimeout(() => displayMessage("你没看错这是一个模拟回复1没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回没看错这是一个模拟回", 'bot-message', '问答机器人'), 500);-->
+            // 清空输入框
+            document.getElementById('userInput').value = '';
+        }
+    }
+
+    // 发送博物馆名称介绍的函数
+    function secondFunction(museumName) {
+        // 显示用户发送的消息
+        displayMessage('请介绍一下'+museumName, 'user-message', 'You');
+        if (museumName === '山西博物馆') {
+            setTimeout(() => displayMessage("山西博物馆是位于中国山西省省会太原市的一座重要博物馆，成立于1918年，是中国较早建立的博物馆之一。该博物馆以收藏、研究和展示山西省的历史文化遗产为主要任务，展示了丰富的历史文物、艺术品和考古发现。山西博物馆的藏品涵盖了从古至今的各个历史时期，包括古代青铜器、陶器、玉器、书画、瓷器、金银器、甲骨文等，展示了山西丰富的历史文化内涵。其中，以其收藏的“战国鼎”、“周禄”、“春秋方壶”等青铜器闻名于世。此外，山西博物馆还有大量的历史文献、古籍、碑刻等珍贵资料，为研究山西历史、文化提供了重要的依据。博物馆建筑风格独特，展厅设计精美，展示手段多样，是游客了解山西历史文化的重要场所之一，也是学术研究者进行研究的重要资源。", 'bot-message', '问答机器人'), 500);
+        } else if (museumName === '湖北博物馆'){
+            setTimeout(() => displayMessage("湖北博物馆是位于中国湖北省省会武汉市的一座重要博物馆，是湖北省内最大的综合性博物馆之一。该博物馆成立于1953年，是一座具有丰富历史和文化底蕴的博物馆，展示了湖北省的历史、文化和自然遗产。湖北博物馆的藏品涵盖了从史前时期到现代的各个历史时期，包括青铜器、陶器、玉器、书画、瓷器、金银器、古籍碑刻、民俗文物等。其中，以其收藏的楚文化、三国文化、明清瓷器等闻名于世。博物馆建筑设计独具特色，展厅布局合理，展示手段多样，为游客提供了全面了解湖北历史文化的机会。此外，湖北博物馆还举办各种丰富多彩的临时展览和文化活动，吸引了大量游客和学术研究者前来参观和交流。作为湖北省的文化标志之一，湖北博物馆在弘扬中华文化、促进地方文化发展方面发挥着重要作用。", 'bot-message', '问答机器人'), 500);
+        }else if(museumName === '柏林国家博物馆'){
+            setTimeout(() => displayMessage("柏林国家博物馆位于德国首都柏林市中心，是一组汇集了世界各个时期和地区文化遗产的博物馆。从古埃及至现代艺术，这些博物馆展示了丰富多彩的艺术品和文物，其中包括古代雕塑、绘画、古代希腊罗马艺术、以及19世纪以来的欧洲绘画等。作为柏林的文化象征和世界文化遗产的一部分，这些博物馆吸引着全球游客，为观众提供了了解世界各地文化和历史的独特机会。", 'bot-message', '问答机器人'), 500);
+        }
+        else{
+            setTimeout(() => displayMessage("阿姆斯特丹国立博物馆（Rijksmuseum）位于荷兰首都阿姆斯特丹，是荷兰最重要、最著名的博物馆之一，也是世界上最大的艺术与历史博物馆之一。该博物馆成立于1800年，收藏了丰富多样的艺术品和历史文物，涵盖了从中世纪到现代的荷兰艺术与历史。阿姆斯特丹国立博物馆以其收藏的荷兰黄金时代绘画而闻名于世，其中包括荷兰著名画家如雷姆布兰特、维梅尔、海门斯、维尔默斯等的杰作。此外，博物馆还收藏了大量的古代艺术品、亚洲艺术品、装饰艺术、历史文物等，展示了荷兰的历史和文化。阿姆斯特丹国立博物馆建筑宏伟壮观，是阿姆斯特丹的地标建筑之一，其建筑设计融合了哥特式和文艺复兴风格，是一处城市中的艺术宝藏。博物馆内部展览空间宽敞，展示手段先进，游客可以在这里欣赏到丰富多彩的艺术品和历史文物。作为荷兰文化的象征，阿姆斯特丹国立博物馆每年吸引了数以百万计的游客前来参观，也是荷兰文化与历史研究的重要中心。", 'bot-message', '问答机器人'), 500);
+        }
+        // 模拟响应消息
+       // setTimeout(() => displayMessage("你没看错这是一个模拟回复", 'bot-message', '问答机器人'), 500);
+    }
+    // 显示消息、头像和名称的函数
+    function displayMessage(message, messageType, name) {
+        var messageContainer = document.createElement('div');
+        var messageInfo = document.createElement('div');
+        messageInfo.className = 'message-info';
+
+        var avatar = document.createElement('div');
+        if (messageType === 'user-message') {
+            avatar.className = 'avatar avatar-user'; // 应用用户的头像样式
+        } else {
+            avatar.className = 'avatar avatar-bot'; // 应用机器人的头像样式
+        }
+        var nameElement = document.createElement('div');
+        nameElement.className = 'name';
+        nameElement.textContent = name;
+
+        var textContainer = document.createElement('div');
+        textContainer.className = 'text';
+        textContainer.textContent = message;
+
+        var timestamp = document.createElement('div');
+        timestamp.className = 'timestamp';
+        timestamp.textContent = new Date().toLocaleString("zh-CN", {timeZone: "Asia/Shanghai", hour12: false});
+
+        messageContainer.classList.add('message', messageType);
+
+        if (messageType === 'user-message') {
+            messageInfo.appendChild(nameElement);
+            messageInfo.appendChild(avatar);
+        } else {
+            messageInfo.appendChild(avatar);
+            messageInfo.appendChild(nameElement);
+        }
+
+        messageContainer.appendChild(messageInfo);
+        messageContainer.appendChild(textContainer);
+        messageContainer.appendChild(timestamp);
+
+        var messageList = document.getElementById('messageList');
+        messageList.appendChild(messageContainer);
+        messageList.scrollTop = messageList.scrollHeight;  // 自动滚动到最新消息
+    }
+</script>
+
+</body>
+</html>
